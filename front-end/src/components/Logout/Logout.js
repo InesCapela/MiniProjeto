@@ -6,9 +6,11 @@ import * as authActions from '../../store/actions/index';
 
 const Logout = props => {
 
+    const { onLogout } = props;
+
     useEffect(() => {
-        props.onLogout();
-    }, [])
+        onLogout();
+    }, [onLogout])
 
     return (
         <div>

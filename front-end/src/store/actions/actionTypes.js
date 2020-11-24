@@ -12,7 +12,9 @@ export const AUTH_LOGOUT = 'AUTH_LOGOUT';
 export const REFRESH_TOKEN = 'REFRESH_TOKEN';
 export const SET_AUTH_REDIRECT_PATH = 'SET_AUTH_REDIRECT_PATH';
 
-// place view
-export const GET_PLACE_INFO = 'PLACE_INFO'
-export const PLACE_ADD = 'PLACE_ADD';
-export const PLACE_SUB = 'PLACE_SUB';
+// users
+export const GET_ALL_USERS = 'GET_ALL_USERS';
+export const CREATE_USER = 'CREATE_USER';
+export const EDIT_USER = 'EDIT_USER';
+export const DELETE_USER = 'DELETE_USER';
+

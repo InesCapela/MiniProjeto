@@ -48,6 +48,43 @@ func init() {
 		IsAdmin:  true,
 	})
 
+	// users test
+	services.Db.Save(&model.Users{
+		Username: "user1",
+		Password: "password",
+		IsAdmin:  false,
+	})
+	services.Db.Save(&model.Users{
+		Username: "user2",
+		Password: "password",
+		IsAdmin:  false,
+	})
+	services.Db.Save(&model.Users{
+		Username: "user3",
+		Password: "password",
+		IsAdmin:  false,
+	})
+
+	// places test
+	services.Db.Save(&model.Places{
+		Name:      "place1",
+		Latitude:  0,
+		Longitude: 0,
+		People:    5,
+	})
+	services.Db.Save(&model.Places{
+		Name:      "place2",
+		Latitude:  0,
+		Longitude: 0,
+		People:    10,
+	})
+	services.Db.Save(&model.Places{
+		Name:      "place3",
+		Latitude:  0,
+		Longitude: 0,
+		People:    15,
+	})
+
 	defer services.Db.Close()
 }
 
@@ -61,8 +98,8 @@ func main() {
 
 	router.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"*"},
-		AllowMethods:     []string{"GET", "POST"},
-		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization", "username"},
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
 	}))

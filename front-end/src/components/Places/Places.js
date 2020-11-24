@@ -1,15 +1,16 @@
 import React, { useEffect } from 'react';
-import { connect, useDispatch, useSelector } from 'react-redux';
-
+import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 
 import Place from './Place';
-import * as placesActions from '../../store/actions/index';
+import * as actions from '../../store/actions/index';
 
 import HomeIcon from '@material-ui/icons/Home';
-import { DialogContentText, DialogContent, CircularProgress, List } from '@material-ui/core';
+import List from '@material-ui/core/List';
+import { CircularProgress } from '@material-ui/core';
 import BackdropUI from '../UI/Backdrop/BackdropUI';
-
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
 import { useStyles } from '../Styles/Styles';
 
 const Places = props => {
@@ -24,7 +25,7 @@ const Places = props => {
         if (props.token !== null) {
             onGetAllPlaces(props.token);
         }
-    }, [onGetAllPlaces, props.history, props.token])
+    }, [onGetAllPlaces, props.token])
 
     let places = <CircularProgress />
 
@@ -55,13 +56,11 @@ const Places = props => {
         );
     }
 
-
-    // is authenticated
-    let placesEl = !props.token ? <Redirect to='/' /> : null;
+    let isAuth = !props.token ? <Redirect to='/' /> : null;
 
     return (
         <div>
-            {placesEl}
+            {isAuth}
             <div className={classes.places}>
                 <h1>Places <HomeIcon /></h1>
                 <div>
@@ -88,7 +87,7 @@ const mapStateToProps = (state) => {
 // actions to reducer (dispatch)
 const mapDispatchToProps = (dispatch) => {
     return {
-        onGetAllPlaces: (token) => dispatch(placesActions.fetchAllPlaces(token)),
+        onGetAllPlaces: (token) => dispatch(actions.fetchAllPlaces(token)),
     };
 }
 

@@ -13,6 +13,12 @@ export {
     logout,
     authSuccess,
     authCheckState,
-    refreshToken,
     setAuthRedirectPath,
 } from './auth';
+
+export {
+    fetchAllUsers,
+    createUser,
+    deleteUser,
+    editUser,
+} from './users';

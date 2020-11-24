@@ -23,8 +23,8 @@ func GetSecretKey() []byte {
 	return []byte(secretKey)
 }
 
-func GenerateTokenJWT(credentials model.Users) (string, time.Time) {
-	expirationTime := time.Now().Add(15 * time.Minute)
+func GenerateTokenJWT(credentials model.Users) (string, time.Time, bool) {
+	expirationTime := time.Now().Add(60 * time.Minute)
 
 	claims := &model.Claims{
 		Username: credentials.Username,
@@ -37,10 +37,10 @@ func GenerateTokenJWT(credentials model.Users) (string, time.Time) {
 	tokenString, err := token.SignedString(JwtKey)
 
 	if err != nil {
-		return "", time.Now()
+		return "", time.Now(), false
 	}
 
-	return tokenString, expirationTime
+	return tokenString, expirationTime, claims.IsAdmin
 }
 
 func ValidateTokenJWT(c *gin.Context) bool {

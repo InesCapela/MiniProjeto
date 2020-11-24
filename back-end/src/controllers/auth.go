@@ -25,14 +25,14 @@ func LoginHandler(c *gin.Context) {
 	}
 
 	// Changed 'creds' to 'usr' so it can access the field 'IsAdmin'
-	token, expirationTime := services.GenerateTokenJWT(usr)
+	token, expirationTime, isAdmin := services.GenerateTokenJWT(usr)
 
 	if token == "" {
 		c.JSON(http.StatusUnauthorized, gin.H{"status": http.StatusUnauthorized, "message": "Access denied!"})
 		return
 	}
 	defer services.Db.Close()
-	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "message": "Success!", "username": creds.Username, "token": token, "expirationTime": expirationTime})
+	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "message": "Success!", "username": creds.Username, "token": token, "expirationTime": expirationTime, "isAdmin": isAdmin})
 }
 
 func RegisterHandler(c *gin.Context) {
@@ -55,7 +55,7 @@ func RegisterHandler(c *gin.Context) {
 	} else {
 		services.Db.Save(&creds)
 		defer services.Db.Close()
-		c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "message": "Success!", "User ID": creds.ID})
+		c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "message": "Success!", "userID": creds.ID})
 	}
 }
 
@@ -65,7 +65,7 @@ func RefreshHandler(c *gin.Context) {
 		Username: c.GetHeader("username"),
 	}
 
-	token, expirationTime := services.GenerateTokenJWT(user)
+	token, expirationTime, isAdmin := services.GenerateTokenJWT(user)
 
 	if token == "" || user.Username == "" {
 		c.JSON(http.StatusUnauthorized, gin.H{"status": http.StatusUnauthorized, "message": "Access denied!"})
@@ -73,5 +73,5 @@ func RefreshHandler(c *gin.Context) {
 	}
 
 	defer services.Db.Close()
-	c.JSON(http.StatusOK, gin.H{"status": http.StatusNoContent, "message": "Token updated sucessful!", "token": token, "expirationTime": expirationTime})
+	c.JSON(http.StatusOK, gin.H{"status": http.StatusNoContent, "message": "Token updated sucessful!", "token": token, "expirationTime": expirationTime, "isAdmin": isAdmin})
 }

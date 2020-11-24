@@ -37,7 +37,7 @@ const Login = props => {
     let isAuth = props.token ? <Redirect to='/places' /> : null;
 
     return (
-        < Container maxWidth="sm" >
+        <Container maxWidth="sm" >
             <Grid>
                 <Box boxShadow={3} style={{ padding: '50px' }}>
                     {isAuth}
