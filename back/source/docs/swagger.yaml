@@ -1,0 +1,122 @@
+definitions:
+  model.Claims:
+    properties:
+      isAdmin:
+        type: boolean
+      username:
+        type: string
+    type: object
+  model.Places:
+    properties:
+      activeStaff:
+        items:
+          $ref: '#/definitions/model.Users'
+        type: array
+      id:
+        type: integer
+      latitude:
+        type: number
+      longitude:
+        type: number
+      name:
+        type: string
+      people:
+        type: integer
+    required:
+    - latitude
+    - longitude
+    - name
+    type: object
+  model.Users:
+    properties:
+      id:
+        type: integer
+      isAdmin:
+        type: boolean
+      password:
+        type: string
+      places:
+        items:
+          $ref: '#/definitions/model.Places'
+        type: array
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+info:
+  contact: {}
+paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Autentica o utilizador e gera o token para os próximos acessos
+      parameters:
+      - description: Do login
+        in: body
+        name: evaluation
+        required: true
+        schema:
+          $ref: '#/definitions/model.Users'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Claims'
+        "400":
+          description: Bad request
+        "401":
+          description: Unauthorized
+      summary: Realizar autenticação
+  /auth/refresh_token:
+    put:
+      consumes:
+      - application/json
+      description: Atualiza o token de autenticação do usuário
+      parameters:
+      - description: Token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Claims'
+        "400":
+          description: Bad request
+        "401":
+          description: Unauthorized
+      summary: Atualiza token de autenticação
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Regista um utilizador
+      parameters:
+      - description: Do register
+        in: body
+        name: evaluation
+        required: true
+        schema:
+          $ref: '#/definitions/model.Users'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Claims'
+        "400":
+          description: Bad request
+        "401":
+          description: Unauthorized
+      summary: Realizar registro
+swagger: "2.0"

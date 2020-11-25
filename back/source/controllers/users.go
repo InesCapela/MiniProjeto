@@ -1,0 +1,92 @@
+package controllers
+
+import (
+	"api/model"
+	"api/services"
+	"fmt"
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+)
+
+func GetAllUsers(c *gin.Context) {
+	var users []model.Users
+
+	services.Db.Find(&users)
+
+	if len(users) <= 0 {
+		c.JSON(http.StatusNotFound, gin.H{"status": http.StatusNotFound, "message": "None found!"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": users})
+}
+
+func GetUserByID(c *gin.Context) {
+	var user model.Users
+	id := c.Param("id")
+
+	services.Db.First(&user, id)
+	if user.ID == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"status": http.StatusNotFound, "message": "User not found!"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": user})
+}
+
+func GetPlacesFromUser(c *gin.Context) {
+	var user model.Users
+	uname, exists := c.Get("username")
+	fmt.Println("USERNAME: ", uname)
+	services.Db.Where("username = ?", uname).First(&user)
+
+	if exists == false {
+		c.JSON(http.StatusNotFound, gin.H{"status": http.StatusNotFound, "message": "User not found!"})
+		return
+	}
+
+	places := []model.Places{}
+	services.Db.Model(&user).Association("Places").Find(&places)
+
+	c.JSON(http.StatusOK, gin.H{"status": http.StatusAccepted, "data": places})
+}
+
+func UpdateUser(c *gin.Context) {
+	var user model.Users
+
+	id := c.Param("id")
+	services.Db.First(&user, id)
+
+	if user.ID == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"status": http.StatusNotFound, "message": "User not found!"})
+		return
+	}
+
+	if err := c.ShouldBindJSON(&user); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"status": http.StatusBadRequest, "message": "Check request!"})
+		return
+	}
+
+	// Update settings
+	c.Set("username", user.Username)
+	c.Set("isAdmin", user.IsAdmin)
+
+	services.Db.Save(user)
+	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "message": "Update succeeded!"})
+}
+
+func DeleteUser(c *gin.Context) {
+	var user model.Users
+
+	id := c.Param("id")
+	services.Db.First(&user, id)
+
+	if user.ID == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"status": http.StatusNotFound, "message": "None found!"})
+		return
+	}
+
+	services.Db.Delete(&user)
+	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "message": "Delete succeeded!"})
+}

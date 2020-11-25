@@ -1,7 +1,0 @@
-npm i axios
-npm i socket.io-client
-npm i --save redux react-redux
-npm i leaflet leaflet react-leaflet
-npm i react-router react-router-dom --save
-npm i @material-ui/core @material-ui/icons @material-ui/lab
-

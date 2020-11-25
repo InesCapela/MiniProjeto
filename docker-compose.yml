@@ -1,0 +1,45 @@
+version: '3.6'
+
+services:
+  database:
+    restart: always
+    container_name: pawb_miniprojeto_databaseB
+    image: postgres:12 # use latest official postgres version
+    volumes:
+      - database-data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=test
+      - POSTGRES_PASSWORD=passw0rd
+      - POSTGRES_DB=apidb
+    ports:
+      - "5444:5432"
+
+  backend:
+    container_name: pawb_miniprojeto_backendB
+    links:
+      - database
+    restart: always
+    build: back/.
+    ports:
+      - "8080:8080"
+    depends_on:
+      - database
+    volumes:
+      - ./back/source:/go/src/api
+
+  frontend:
+    container_name: pawb_miniprojeto_frontendB
+    links:
+      - backend
+    restart: always
+    build: front/.
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    volumes:
+      - ./front/source:/app
+
+
+volumes:
+  database-data: # named volumes can be managed easier using docker-compose
