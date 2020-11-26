@@ -1,7 +1,7 @@
 import axios from 'axios';
 import * as actionTypes from './actionTypes';
-import * as api from './api'
 import * as loadingErrorActions from '../actions/index';
+import * as api from './api';
 
 export const authSuccess = (token, username, isAdmin) => {
     return {
@@ -20,13 +20,6 @@ export const logout = () => {
     localStorage.removeItem('isAdmin');
     return {
         type: actionTypes.AUTH_LOGOUT,
-    };
-}
-
-export const setAuthRedirectPath = (path) => {
-    return {
-        type: actionTypes.SET_AUTH_REDIRECT_PATH,
-        path: path,
     };
 }
 
@@ -77,13 +70,14 @@ export const authCheckState = () => {
             dispatch(logout());
         } else {
             const username = localStorage.getItem('username');
+            const isAdmin = localStorage.getItem('isAdmin');
             const expirationDate = new Date(localStorage.getItem('expirationDate'));
             if (expirationDate <= new Date()) {
                 dispatch(logout());
             } else {
                 // 60000 -> 1min to refresh token before it expires
                 const expirationTime = expirationDate.getTime() - new Date().getTime() - 60000;
-                dispatch(authSuccess(token, username));
+                dispatch(authSuccess(token, username, isAdmin));
                 dispatch(checkAuthTimeout(expirationTime));
             }
         }

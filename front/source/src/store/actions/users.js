@@ -2,7 +2,7 @@ import axios from 'axios';
 
 import * as loadingErrorActions from '../actions/index';
 import * as actionTypes from './actionTypes';
-import * as api from "./api"
+import * as api from './api';
 
 const getAllUsers = (users) => {
     return {
@@ -19,7 +19,7 @@ export const fetchAllUsers = (token) => {
                 Authorization: token
             }
         };
-        axios.get(api.URL_USERS, auth).then(response => {
+        axios.get(api.URL_GET_ALL_USERS, auth).then(response => {
             dispatch(getAllUsers(response.data.data));
             dispatch(loadingErrorActions.endRequest());
         }).catch(err => {
@@ -80,20 +80,28 @@ export const deleteUser = (id, token) => {
     }
 }
 
-const onUpdateUser = () => {
+const onUpdateUser = (user) => {
     return {
-        type: actionTypes.DELETE_USER,
-
+        type: actionTypes.EDIT_USER,
+        user: user,
     }
 }
 
-export const editUser = (token) => {
+export const editUser = (user, token) => {
     return (dispatch) => {
         const auth = {
             headers: {
                 Authorization: token,
             }
         };
-
+        const updatedUser = {
+            username: user.username,
+            password: user.password
+        };
+        axios.put(api.URL_USERS_EDIT + user.id, updatedUser, auth).then(res => {
+            dispatch(onUpdateUser(user));
+        }).catch(err => {
+            console.log(err);
+        });
     }
 }

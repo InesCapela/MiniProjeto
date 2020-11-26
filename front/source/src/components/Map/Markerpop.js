@@ -12,7 +12,7 @@ const Markerpop = props => {
     return (
         <Marker position={[props.lat, props.long]} icon={myIcon}>
             <Popup>
-                {props.name} <br /> # Pessoas.
+                {props.name} <br /> {props.people} Pessoas.
             </Popup>
         </Marker>
     );

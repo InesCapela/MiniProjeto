@@ -3,7 +3,6 @@ import React from 'react';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import PeopleAltIcon from '@material-ui/icons/PeopleAlt';
-import { useLocation } from 'react-router';
 
 function ListItemLink(props) {
     return <ListItem button component="a" {...props} />;
@@ -11,10 +10,18 @@ function ListItemLink(props) {
 
 const Place = props => {
 
+    const place = {
+        ID: props.id,
+        name: props.name,
+        latitude: props.lat,
+        longitude: props.lng,
+        people: props.persons,
+    }
+
     return (
         <div>
-            <ListItemLink href={useLocation().pathname + "/" + props.id}>
-                <ListItemText><strong>{props.name + " - "}</strong><PeopleAltIcon />{" " + props.persons}</ListItemText>
+            <ListItemLink>
+                <ListItemText onClick={(event) => props.selectPlace(event, place)}><strong>{props.name + " - "}</strong><PeopleAltIcon />{" " + props.persons}</ListItemText>
             </ListItemLink>
         </div >
     );

@@ -7,7 +7,7 @@ const Layout = props => {
 
     return (
         <React.Fragment>
-            {props.token ? <NavbarUI /> : null}
+            {props.token ? <NavbarUI isAdmin={props.isAdmin} token={props.token} /> : null}
             <main className="Content">
                 {props.children}
             </main>
@@ -19,6 +19,7 @@ const Layout = props => {
 const mapStateToProps = (state) => {
     return {
         token: state.auth.token,
+        isAdmin: state.auth.isAdmin,
     };
 }
 

@@ -1,5 +1,9 @@
 export {
     fetchAllPlaces,
+    createPlace,
+    editPlace,
+    deletePlace,
+    fetchUserPlaces,
 } from './places';
 
 export {
@@ -13,7 +17,6 @@ export {
     logout,
     authSuccess,
     authCheckState,
-    setAuthRedirectPath,
 } from './auth';
 
 export {

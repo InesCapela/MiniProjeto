@@ -13,7 +13,7 @@ const NavbarUI = props => {
                 <Nav className="mr-auto">
                     <Nav.Link as={NavLink} to="/places">Places</Nav.Link>
                     <Nav.Link as={NavLink} to="/map">Map</Nav.Link>
-                    <Nav.Link as={NavLink} to="/users">Users</Nav.Link>
+                    {props.isAdmin === true ? <Nav.Link as={NavLink} to="/users">Users</Nav.Link> : null}
                 </Nav>
                 <Nav>
                     <Nav.Link as={NavLink} to="/logout">Logout</Nav.Link>

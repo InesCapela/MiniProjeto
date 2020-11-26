@@ -16,6 +16,6 @@ type Places struct {
 
 	Users []*Users `gorm:"many2many:users_places;" json:"-"`
 
-	ActiveStaff []Users `json:"activeStaff"`
-	People      uint    `json:"people" gorm:"default:0"`
+	ActiveStaff []*Users `json:"activeStaff" gorm:"type:text"`
+	People      uint     `json:"people" gorm:"default:0"`
 }

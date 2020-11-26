@@ -3,7 +3,6 @@ package controllers
 import (
 	"api/model"
 	"api/services"
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -38,7 +37,7 @@ func GetUserByID(c *gin.Context) {
 func GetPlacesFromUser(c *gin.Context) {
 	var user model.Users
 	uname, exists := c.Get("username")
-	fmt.Println("USERNAME: ", uname)
+
 	services.Db.Where("username = ?", uname).First(&user)
 
 	if exists == false {

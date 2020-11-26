@@ -10,7 +10,13 @@ const User = props => {
             <td>{props.username}</td>
             <td><Button variant="danger" onClick={() => props.deleteUser(props.id)} disabled={props.username === 'admin'} >Delete</Button></td>
             <td><Button variant="info" onClick={() =>
-                props.userSelected({ username: props.username, password: props.password })}>Edit</Button></td>
+                props.userSelected({
+                    id: props.id,
+                    username: props.username,
+                    password: props.password,
+                    isAdmin: props.isAdmin,
+                    places: props.places
+                })}>Edit</Button></td>
         </tr>
     );
 }

@@ -76,6 +76,66 @@ func frontofficeRoutes(router *gin.Engine) {
 }
 
 func socketioRoutes(server *socketio.Server) {
+	// User connected
+	server.OnConnect("/", func(s socketio.Conn) error {
+		fmt.Println("socket.io> new connection ...")
+
+		// AUTH
+		server.OnEvent("", "set-token", func(s socketio.Conn, data string) {
+			s.SetContext(services.ParseToken(data))
+
+			if s.Context() == nil {
+				fmt.Println("socket.io> invalid token!")
+				s.Close()
+			}
+
+			inter := s.Context()
+			fmt.Println("socket.io> username:", inter.(*model.SocketInfo).Username)
+			fmt.Println("socket.io> place:", inter.(*model.SocketInfo).Place)
+		})
+
+		return nil
+	})
+
+	// Add people to room
+	server.OnEvent("/", "add-people", func(s socketio.Conn, data string) {
+		socketInfo := s.Context().(*model.SocketInfo)
+		fmt.Println("socket.io> (", socketInfo.Username, ") added one person to:", socketInfo.Place)
+
+		placeName, people := services.AddPersonToPlace(*socketInfo)
+
+		if placeName != "" {
+			// BROADCAST GERAL IN ROOM
+			s.Emit("update-place", people)
+			fmt.Println("socketio> new values ", placeName, " - ", people)
+		}
+	})
+
+	// Sub people to room
+	server.OnEvent("/", "sub-people", func(s socketio.Conn, data string) {
+		socketInfo := s.Context().(*model.SocketInfo)
+		fmt.Println("socket.io> (", socketInfo.Username, ") subtracted one person from:", socketInfo.Place)
+
+		placeName, people := services.SubPersonFromPlace(*socketInfo)
+
+		if placeName != "" {
+			// BROADCAST GERAL IN ROOM
+			fmt.Println("socket.io> new values", placeName, "-", people)
+		}
+	})
+
+	// Change room
+	server.OnEvent("/", "change-place", func(s socketio.Conn, data string) {
+		socketInfo := s.Context().(*model.SocketInfo)
+		fmt.Println("socket.io> (", socketInfo.Username, ") wants to change place from:", socketInfo.Place, "to:", data)
+		services.ChangeUserToPlace(socketInfo, data)
+	})
+
+	//  User disconnected
+	server.OnDisconnect("/", func(s socketio.Conn, err string) {
+		//socketInfo := s.Context().(*model.SocketInfo)
+		//fmt.Println("socket.io> (", socketInfo.Username, ") disconnected! Last seen on:", socketInfo.Place)
+	})
 
 }
 
@@ -85,15 +145,23 @@ func main() {
 	router := gin.New()
 	router.Use(gin.Logger())
 	router.Use(gin.Recovery())
-	router.Use(services.GinMiddleware("*"))
+	//router.Use(services.GinMiddleware("*"))
 
 	//router.Use(services.ReactMiddleware())
-	//router.Use(services.GinMiddleware("http://127.0.0.1:8081"))
+	router.Use(services.GinMiddleware("http://localhost:3000"))
 
 	// Initialize routes
 	initializeRoutes(router)
 
 	// Socket io
+	server := socketio.NewServer(nil)
+	socketioRoutes(server)
+
+	router.GET("/socket.io/*any", gin.WrapH(server))
+	router.POST("/socket.io/*any", gin.WrapH(server))
+
+	go server.Serve()
+	defer server.Close()
 
 	router.Run(":8080")
 }
