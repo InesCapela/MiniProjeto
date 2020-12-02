@@ -1,7 +1,9 @@
 import axios from 'axios';
 
 import * as actionTypes from './actionTypes';
-import * as api from './api';
+import * as api from '../actions/api';
+import * as loadingErrorActions from './loadingError';
+
 
 const getAllPlaces = (places) => {
     return {
@@ -12,7 +14,7 @@ const getAllPlaces = (places) => {
 
 export const fetchAllPlaces = (token) => {
     return (dispatch) => {
-        // dispatch(loadingErrorActions.startRequest());
+        dispatch(loadingErrorActions.startRequest());
         const auth = {
             headers: {
                 Authorization: token
@@ -20,10 +22,10 @@ export const fetchAllPlaces = (token) => {
         };
         axios.get(api.URL_GET_ALL_PLACES, auth).then(response => {
             dispatch(getAllPlaces(response.data.data));
-            // dispatch(loadingErrorActions.endRequest());
+            dispatch(loadingErrorActions.endRequest());
         }).catch(err => {
-            console.log(err);
-            // dispatch(actions.logout());
+            console.log(err)
+            dispatch(loadingErrorActions.errorRequest(err.toString()));
         });
     }
 }

@@ -53,6 +53,10 @@ func backofficeRoutes(router *gin.Engine) {
 	back := router.Group("/back")
 	back.Use(services.AdminAuthorizationRequired())
 	{
+		back.POST("/users-places/:id", routes.AddPlaceToUser)
+		back.DELETE("/users-places/:id", routes.RemovePlaceFromUser)
+		back.GET("/users-places/:id", routes.GetPlacesFromUserID)
+
 		back.GET("/users", routes.GetAllUsers)
 		back.GET("/users/:id", routes.GetUserByID)
 		back.PUT("/users/:id", routes.UpdateUser)
@@ -63,6 +67,7 @@ func backofficeRoutes(router *gin.Engine) {
 		back.POST("/places", routes.CreatePlace)
 		back.PUT("/places/:id", routes.UpdatePlace)
 		back.DELETE("/places/:id", routes.DeletePlace)
+
 	}
 }
 
@@ -145,10 +150,10 @@ func main() {
 	router := gin.New()
 	router.Use(gin.Logger())
 	router.Use(gin.Recovery())
-	//router.Use(services.GinMiddleware("*"))
+	router.Use(services.GinMiddleware("*"))
 
 	//router.Use(services.ReactMiddleware())
-	router.Use(services.GinMiddleware("http://localhost:3000"))
+	// router.Use(services.GinMiddleware("http://localhost:3000"))
 
 	// Initialize routes
 	initializeRoutes(router)

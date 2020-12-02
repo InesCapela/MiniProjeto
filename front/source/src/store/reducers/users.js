@@ -2,10 +2,10 @@ import * as actionTypes from '../actions/actionTypes';
 
 const initialState = {
     users: [],
+    userPlaces: [],
 };
 
 const reducer = (state = initialState, action) => {
-
     switch (action.type) {
         case (actionTypes.GET_ALL_USERS):
             return {
@@ -39,6 +39,21 @@ const reducer = (state = initialState, action) => {
             return {
                 ...state,
                 users: state.users.filter((user) => (user.ID !== action.id)),
+            };
+        case (actionTypes.GET_USER_PLACES_ADMIN):
+            return {
+                ...state,
+                userPlaces: action.userPlaces,
+            };
+        case (actionTypes.ADD_PLACE_TO_USER):
+            return {
+                ...state,
+                userPlaces: state.userPlaces.concat(action.place),
+            };
+        case (actionTypes.REMOVE_PLACE_FROM_USER):
+            return {
+                ...state,
+                userPlaces: state.userPlaces.filter((place) => (place.ID !== action.id)),
             };
         default:
             return state;

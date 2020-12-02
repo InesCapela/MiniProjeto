@@ -13,29 +13,17 @@ import { connect } from 'react-redux';
 
 const App = props => {
 
-  let routes = (
+  const routes = (
     <Switch>
       <Route path="/places" component={Places} />
       <Route path="/map" component={MapLeaflet} />
+      <Route path="/users" component={Users} />
       <Route path="/logout" component={Logout} />
       <Route path="/" component={Login} />
       <Route render={() => <h1>Not found!</h1>} />
       <Redirect to="/" />
     </Switch>
   );
-
-  if (props.isAdmin === true) {
-    routes = (
-      <Switch>
-        <Route path="/places" component={Places} />
-        <Route path="/map" component={MapLeaflet} />
-        <Route path="/logout" component={Logout} />
-        <Route path="/users" component={Users} />
-        <Route path="/" component={Login} />
-        <Route render={() => <h1>Not found!</h1>} />
-        <Redirect to="/" />
-      </Switch>)
-  }
 
   return (
     <React.Fragment>

@@ -51,6 +51,27 @@ func GetPlacesFromUser(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"status": http.StatusAccepted, "data": places})
 }
 
+func GetPlacesFromUserID(c *gin.Context) {
+	var user model.Users
+	id := c.Param("id")
+
+	services.OpenDatabase()
+
+	services.Db.First(&user, id)
+
+	if user.ID == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"status": http.StatusNotFound, "message": "User not found!"})
+		return
+	}
+
+	places := []model.Places{}
+	services.Db.Model(&user).Association("Places").Find(&places)
+
+	defer services.Db.Close()
+
+	c.JSON(http.StatusOK, gin.H{"status": http.StatusAccepted, "data": places})
+}
+
 func UpdateUser(c *gin.Context) {
 	var user model.Users
 

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import * as actionTypes from './actionTypes';
 import * as loadingErrorActions from '../actions/index';
-import * as api from './api';
+import * as api from '../actions/api';
 
 export const authSuccess = (token, username, isAdmin) => {
     return {
@@ -32,7 +32,6 @@ export const auth = (username, password) => {
 
         axios.post(api.URL_LOGIN, authData).then(res => {
             dispatch(loadingErrorActions.startRequest());
-
 
             const expirationDate = new Date(Date.parse(res.data.expirationTime));
             // 60000 -> 1min to refresh token before it expires

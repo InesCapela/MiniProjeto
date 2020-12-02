@@ -30,13 +30,13 @@ func LoadMockupData() {
 	place3 := model.Places{Name: "Alameda Shop & Spot", Latitude: 41.16501512697165, Longitude: -8.584361491214967}
 	place4 := model.Places{Name: "World Trade Center Porto", Latitude: 41.16100888723494, Longitude: -8.638949806913477}
 
-	places := []*model.Places{&place1}
-	user1 := model.Users{Username: "admin", Password: "password", IsAdmin: true, Places: places}
+	places := []*model.Places{&place1, &place2}
+	user1 := model.Users{Username: "admin", Password: "password", IsAdmin: true}
 	user2 := model.Users{Username: "rui", Password: "password", IsAdmin: false, Places: places}
-	user3 := model.Users{Username: "paulo", Password: "password", IsAdmin: false}
+	user3 := model.Users{Username: "paulo", Password: "password", IsAdmin: false, Places: places}
 	user4 := model.Users{Username: "ines", Password: "password", IsAdmin: false}
 
-	user1.Places = append(user1.Places, &place2)
+	// user2.Places = append(user2.Places, &place2)
 
 	Db.Save(&place1)
 	Db.Save(&place2)

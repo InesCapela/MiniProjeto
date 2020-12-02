@@ -4,7 +4,8 @@ import { Redirect } from 'react-router';
 
 import Place from './Place';
 import * as actions from '../../store/actions/index';
-
+import * as api from '../../store/actions/api';
+import socketIOClient from "socket.io-client";
 import HomeIcon from '@material-ui/icons/Home';
 import List from '@material-ui/core/List';
 import { CircularProgress } from '@material-ui/core';
@@ -12,16 +13,16 @@ import { useStyles } from '../Styles/Styles';
 import InfoPlace from './InfoPlace';
 
 const Places = props => {
-
     const socket = socketIOClient(api.URL_SOCKETIO, {
         withCredentials: true, transportOptions: {}
-      });
-    
-	useEffect(() => {
+    });
+
+    useEffect(() => {
         socket.on("connect", () => {
-          socket.emit("set-token", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiaXNBZG1pbiI6dHJ1ZSwiZXhwIjoxNjA2MzMwNDc4fQ.G6GQnFeKIN5D-WcMpeTxE-FvdIFInm0XSirck_ALWzw")
+            socket.emit("set-token", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiaXNBZG1pbiI6dHJ1ZSwiZXhwIjoxNjA2MzI2MjE0fQ.PO7qJ9--hZFj7YP-nqoBElI7LL6UxApnAVlCp-FW6s8")
         })
-      }, [socket]);
+    }, [socket]);
+
 
     const [selectedPlace, setSelectedPlace] = useState(null);
 
@@ -33,19 +34,24 @@ const Places = props => {
 
     useEffect(() => {
         if (props.token !== null) {
-            if (props.isAdmin === true) {
+            if (props.isAdmin) {
                 onGetAllPlaces(props.token);
             } else {
-                onGetUserPlaces(props.token);
+                onGetUserPlaces(props.token)
             }
         }
-    }, [onGetAllPlaces, onGetUserPlaces, props.token, props.isAdmin, props.id])
+    }, [onGetAllPlaces, onGetUserPlaces, props.token, props.isAdmin])
+
+
+    useEffect(() => {
+
+    }, [props.places])
 
     let places = <CircularProgress />
 
-    const selectedPlaceHandler = (event, place) => {
+    const selectedPlaceHandler = (event, place, socket) => {
         event.preventDefault();
-        setSelectedPlace(place);
+        setSelectedPlace(place, socket);
     }
 
     const updatePlaceHandler = (event, place) => {
@@ -93,8 +99,8 @@ const Places = props => {
 
                     {selectedPlace && places.length !== 0 ? <InfoPlace
                         isAdmin={props.isAdmin}
-                     	socket={socket}
                         place={selectedPlace}
+                        // socket={socket}
                         updatePlace={updatePlaceHandler}
                         deletePlace={deletePlaceHandler}
                     /> : null}

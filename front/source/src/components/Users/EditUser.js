@@ -1,9 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
+
+import * as actions from '../../store/actions/index';
 
 import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
 import { useStyles } from '../Styles/Styles';
+import { CircularProgress } from '@material-ui/core';
+import Table from 'react-bootstrap/Table';
+import Button from 'react-bootstrap/Button';
 
 const EditUser = props => {
 
@@ -14,24 +19,52 @@ const EditUser = props => {
     const [name, setUsername] = useState('');
     const [pass, setPassword] = useState('');
 
-    const { username, password } = props.user;
+    const { username, password, id } = props.user;
+    const { token, onGetUserPlacesAdmin } = props;
 
     useEffect(() => {
+        onGetUserPlacesAdmin(id, token);
         setUsername(username);
         setPassword(password);
-    }, [username, password]);
+    }, [username, password, id, token, onGetUserPlacesAdmin]);
 
-    let userPlaces = props.usrPlaces.map(usrplace => {
-        return (
-            <div key={Math.random()} >
-                <li>
-                    {usrplace.name}
-                    <button> + </button>
-                    <button> - </button>
-                </li>
-            </div>
-        )
-    })
+    const addPlaceToUserHandler = (place) => {
+        props.onAddPlaceToUserHandler(props.user, place, token);
+    }
+
+    const removePlaceFromUserHandler = (place) => {
+        props.onRemovePlaceFromUserHandler(props.user, place, token);
+    }
+
+    let usrPlaces = <CircularProgress />
+    let otherPlaces = <CircularProgress />
+
+    if (!props.loading && props.user.username !== 'admin') {
+        usrPlaces = props.usrPlaces.map((place) => {
+            return (
+                <tr key={place.ID}>
+                    <td key={place.ID}>{place.name}</td>
+                    <td><Button onClick={() => removePlaceFromUserHandler(place)} variant="danger">Remove</Button></td>
+                </tr>
+            )
+        });
+
+        // filter places that user dont have
+        const otherplacesarray = props.allPlaces.filter((placesAll) => {
+            return !props.usrPlaces.find((placesUser) => {
+                return placesAll.ID === placesUser.ID
+            })
+        });
+
+        otherPlaces = otherplacesarray.map((place) => {
+            return (
+                <tr key={place.ID}>
+                    <td key={place.ID}>{place.name}</td>
+                    <td><Button onClick={() => addPlaceToUserHandler(place)} variant="success">Add</Button></td>
+                </tr>
+            )
+        });
+    }
 
     return (
         <Container maxWidth="sm" >
@@ -47,18 +80,46 @@ const EditUser = props => {
                     }} />
                 </div>
                 <div>
-                    <Button type="submit" variant="contained" color="primary">Edit User</Button>
+                    <Button disabled={name === username && pass === password} type="submit" variant="primary">Edit User</Button>
                 </div>
             </form>
             <hr />
-            <div style={{ padding: '10px' }}>
-                <h3>User places</h3>
-                <ul>
-                    {userPlaces}
-                </ul>
-            </div>
+            {props.user.username !== 'admin' ?
+                <React.Fragment>
+                    <h3>Manage User Places</h3>
+                    <Table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Option</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {usrPlaces}
+                            {otherPlaces}
+                        </tbody>
+                    </Table>
+                </React.Fragment>
+                : null}
+
         </Container >
     );
 }
 
-export default EditUser;
+// get state from reducer
+const mapStateToProps = (state) => {
+    return {
+        usrPlaces: state.users.userPlaces,
+    };
+}
+
+// actions to reducer (dispatch)
+const mapDispatchToProps = (dispatch) => {
+    return {
+        onGetUserPlacesAdmin: (id, token) => dispatch(actions.getUserPlacesByAdmin(id, token)),
+        onAddPlaceToUserHandler: (user, place, token) => dispatch(actions.addPlaceToUserHandler(user, place, token)),
+        onRemovePlaceFromUserHandler: (user, place, token) => dispatch(actions.removePlaceToUserHandler(user, place, token)),
+    };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(EditUser);

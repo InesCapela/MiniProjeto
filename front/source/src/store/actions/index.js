@@ -24,4 +24,7 @@ export {
     createUser,
     deleteUser,
     editUser,
+    getUserPlacesByAdmin,
+    addPlaceToUserHandler,
+    removePlaceToUserHandler,
 } from './users';
