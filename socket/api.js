@@ -2,6 +2,7 @@ var axios = require('axios');
 
 function AddPerson(token, place){
 	var data = JSON.stringify({"place":place});
+
 	var config = {
 		method: 'post',
 		url: 'http://localhost:8080/socketio/add',
@@ -16,6 +17,7 @@ function AddPerson(token, place){
 
 function SubPerson(token, place){
 	var data = JSON.stringify({"place":place});
+
 	var config = {
 		method: 'post',
 		url: 'http://localhost:8080/socketio/sub',
@@ -30,6 +32,7 @@ function SubPerson(token, place){
 
 function ChangePlace(token, place){
 	var data = JSON.stringify({"place":place});
+	
 	var config = {
 		method: 'post',
 		url: 'http://localhost:8080/socketio/change',

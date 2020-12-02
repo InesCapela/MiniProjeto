@@ -16,13 +16,19 @@ func AddPersonToPlace(c *gin.Context) {
 }
 
 func SubPersonFromPlace(c *gin.Context) {
+	mu.Lock()
 	controllers.SubPersonFromPlace(c)
+	defer mu.Unlock()
 }
 
 func ChangeUserToPlace(c *gin.Context) {
-	//controllers.ChangeUserToPlace(c)
+	mu.Lock()
+	controllers.ChangeUserToPlace(c)
+	defer mu.Unlock()
 }
 
 func DisconnectUser(c *gin.Context) {
-	//controllers.ChangeUserToPlace(c)
+	mu.Lock()
+	controllers.DisconnectUser(c)
+	defer mu.Unlock()
 }

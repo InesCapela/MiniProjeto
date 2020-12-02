@@ -25,7 +25,7 @@ io.on("connection", socket => {
 
 		// Already exists a socket associated to this user.
 		if(users.has(token)){
-			//users.get(token).disconnect();
+			users.get(token).disconnect();
 			users.delete(token);
 		}
 
@@ -63,17 +63,20 @@ io.on("connection", socket => {
 	socket.on("change-place", msg => {
 		console.log(`${id}: change place from ${socket.place} to: ${msg}`);
 
+		if(socket.place != null){
+			var post = api.RemovePlace(socket.token, socket.place);
+			post.then((response) => {
+				socket.lastPlace = socket.place;
+			}).catch((error) => console.log(error));
+
+		}
+
 		var post = api.ChangePlace(socket.token, msg);
 		post.then((response) => {
 			var data = response.data
 			console.log(data)
 
-			// socket.join("X");
-			if(socket.lastPlace == null)
-				socket.lastPlace = msg;
-			else
-				socket.lastPlace = socket.place;
-
+			socket.lastPlace = socket.place;
 			socket.place = msg;
 
 			// Avisar oldPlace
@@ -91,6 +94,11 @@ io.on("connection", socket => {
 	// Add person to a place
 	socket.on("add-people", async (msg) => {
 		console.log(`${id}: added one person to: ${socket.place}`);
+
+		if(socket.place === undefined){
+			// GET PLACE AGAIN
+			return
+		}
 
 		var post = api.AddPerson(socket.token, socket.place);
 		await post.then((response) => {
