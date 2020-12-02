@@ -21,6 +21,15 @@ const PlacesPage = props => {
         socket.on("update-place-list", (data) => {
             console.log("NEW UPDATE: ");
             console.log(data);
+
+            // DO HERE
+
+
+            /*
+                data.placeID
+                data.placeName
+                data.users
+            */
         });
 
         socket.on("update-place-number", (data) => {

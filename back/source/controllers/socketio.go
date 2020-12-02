@@ -128,8 +128,6 @@ func DisconnectUser(c *gin.Context) {
 
 	//////////////////////////
 	// Add place
-	//user.CurrentPlace = &place
-
 	users := []model.Users{}
 	var existsUser model.Users
 	services.Db.Model(&place).Association("ActiveStaff").Find(&existsUser)
