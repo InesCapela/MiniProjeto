@@ -30,6 +30,7 @@ const MapLeaflet = props => {
         event.preventDefault();
         // create place
         props.onAddPlace(place, props.token);
+        setOpacity(0);
     }
 
     const opacityHandler = () => {

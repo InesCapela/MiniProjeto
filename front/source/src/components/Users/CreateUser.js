@@ -22,6 +22,8 @@ const CreateUser = props => {
         props.createUser(username, password, props.token);
     }
 
+    let error = props.error ? <label style={{ color: 'red' }}>Failed to create user!</label> : null;
+
     return (
         <Container maxWidth="sm" >
             <form onSubmit={onSubmitHandler} className={classes.authTextFileds} noValidate autoComplete="off">
@@ -37,6 +39,9 @@ const CreateUser = props => {
                     }} />
                 </div>
                 <div>
+                    <div>
+                        {error}
+                    </div>
                     <Button type="submit" variant="contained" color="primary">Create User</Button>
                 </div>
             </form>
@@ -48,6 +53,8 @@ const CreateUser = props => {
 const mapStateToProps = (state) => {
     return {
         token: state.auth.token,
+        loading: state.loadingError.loading,
+        error: state.loadingError.error,
     };
 }
 

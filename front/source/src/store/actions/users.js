@@ -49,9 +49,13 @@ export const createUser = (username, password, token) => {
             }
         };
 
+        dispatch(loadingErrorActions.startRequest());
+
         axios.post(api.URL_USERS_ADD, newUser, auth).then(res => {
             dispatch(createNewUser(username, res.data.userID));
+            dispatch(loadingErrorActions.endRequest());
         }).catch(err => {
+            dispatch(loadingErrorActions.errorRequest(err.toString()));
             console.log(err);
         });
     }
