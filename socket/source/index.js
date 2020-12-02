@@ -45,11 +45,18 @@ io.on("connection", socket => {
 		if(socket.place != undefined) {
 			console.log(`${id}: last place - ${socket.place}`)
 
-			var post = api.RemovePlace(socket.token);
+			var post = api.RemovePlace(socket.token, socket.place);
 			post.then((response) => {
 				var data = response.data
 				console.log(data)
-				// TODO: Avisar oldplace!
+				
+				io.emit("update-place-list", {
+					responseID: responseID,
+					placeID: data.placeID,
+					placeName: data.placeName, 
+					users: data.users
+				});
+				
 			})
 			.catch(function (error) {
 				console.log(error);
@@ -64,18 +71,16 @@ io.on("connection", socket => {
 		console.log(`${id}: change place from ${socket.place} to: ${msg}`);
 
 		if(socket.place != null){
-			var post = api.RemovePlace(socket.token, socket.place);
-			post.then((response) => {
+			var post1 = api.RemovePlace(socket.token, socket.place);
+			post1.then((response) => {
 				socket.lastPlace = socket.place;
 
-				socket.to(socket.lastPlace).emit('update-place-list', {
+				io.emit("update-place-list", {
 					responseID: responseID,
 					placeID: data.placeID,
 					placeName: data.placeName, 
 					users: data.users
 				});
-
-				socket.leave(socket.lastPlace)
 				
 			}).catch((error) => console.log("ERROR: leave old place"));
 
@@ -89,8 +94,7 @@ io.on("connection", socket => {
 			socket.lastPlace = socket.place;
 			socket.place = msg;
 
-			socket.join(socket.place)
-			socket.to(socket.lastPlace).emit('update-place-list', {
+			io.emit("update-place-list", {
 				responseID: responseID,
 				placeID: data.placeID,
 				placeName: data.placeName, 
@@ -118,7 +122,7 @@ io.on("connection", socket => {
 			var data = response.data
 			console.log(data)
 
-			socket.to(socket.place).emit('update-place-number', {
+			io.emit('update-place-number', {
 				responseID: responseID,
 				placeID: data.placeID,
 				placeName: data.placeName, 
@@ -144,7 +148,7 @@ io.on("connection", socket => {
 			var data = response.data
 			console.log(data)
 
-			socket.to(socket.place).emit('update-place-number', {
+			io.emit('update-place-number', {
 				responseID: responseID,
 				placeID: data.placeID,
 				placeName: data.placeName, 

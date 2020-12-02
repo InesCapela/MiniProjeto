@@ -94,7 +94,7 @@ func ChangeUserToPlace(c *gin.Context) {
 	//}
 
 	defer services.Db.Close()
-	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "users": users})
+	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "placeID": place.ID, "placeName": place.Name, "users": users})
 
 }
 
@@ -143,6 +143,6 @@ func DisconnectUser(c *gin.Context) {
 	}
 
 	defer services.Db.Close()
-	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "users": users})
+	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "placeID": place.ID, "placeName": place.Name, "users": users})
 
 }
