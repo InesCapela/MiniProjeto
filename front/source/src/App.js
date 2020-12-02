@@ -4,7 +4,6 @@ import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom';
 import './App.css';
 import Layout from './components/Layout/Layout';
 import Login from './components/Login/Login';
-import Places from './components/Places/Places';
 import MapLeaflet from './components/Map/MapLeaflet';
 import Logout from './components/Logout/Logout';
 import 'bootstrap/dist/css/bootstrap.min.css';

@@ -4,8 +4,6 @@ import { Redirect } from 'react-router';
 
 import Place from './Place';
 import * as actions from '../../store/actions/index';
-import * as api from '../../store/actions/api';
-import socketIOClient from "socket.io-client";
 import HomeIcon from '@material-ui/icons/Home';
 import List from '@material-ui/core/List';
 import { CircularProgress } from '@material-ui/core';

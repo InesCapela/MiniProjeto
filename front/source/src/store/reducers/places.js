@@ -39,6 +39,16 @@ const reducer = (state = initialState, action) => {
                 ...state,
                 places: state.places.filter((place) => (place.ID !== action.id)),
             };
+        case (actionTypes.ADD_SOCKET_LIST):
+            console.log(action)
+            return {
+                ...state,
+            };
+        case (actionTypes.ADD_SOCKET_PEOPLE):
+            console.log(action)
+            return {
+                ...state,
+            };
         default:
             return state;
     }

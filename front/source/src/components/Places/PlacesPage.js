@@ -18,11 +18,28 @@ const PlacesPage = props => {
     socket.on("connect", (data) => {
         console.log("Socket.io Connected ...")
 
-        socket.on("update-place", (data) => {
-            console.log("NEW UPDATE: ");
+        socket.on("update-place-list", (data) => {
+            console.log("LISTA USERS: ");
             console.log(data);
-    
+
+            /*
+                placeID: int
+                users: []Users
+            */
+            props.onAddSocketList(data.placeID, data.users);
         });
+
+        socket.on("update-place-number", (data) => {
+            console.log("NUMBER: ");
+            console.log(data);
+
+            /*
+                placeID: int
+                numUsers: int   // place.People
+            */
+            props.onAddSocketPeople(data.placeID, data.numUsers);
+        });
+
     })
 
     socket.on("disconnect", (data) => {
@@ -54,6 +71,10 @@ const mapDispatchToProps = (dispatch) => {
         onGetUserPlaces: (token) => dispatch(actions.fetchUserPlaces(token)),
         onUpdatePlace: (place, token) => dispatch(actions.editPlace(place, token)),
         onDeletePlace: (id, token) => dispatch(actions.deletePlace(id, token)),
+
+        // sockets
+        onAddSocketList: (placeID, users) => dispatch(actions.addSocketList(placeID, users)),
+        onAddSocketPeople: (placeID, numUsers) => dispatch(actions.addSocketPeople(placeID, numUsers)),
     };
 }
 
