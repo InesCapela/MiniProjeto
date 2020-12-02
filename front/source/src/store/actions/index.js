@@ -4,6 +4,8 @@ export {
     editPlace,
     deletePlace,
     fetchUserPlaces,
+    addSocketList,
+    addSocketPeople
 } from './places';
 
 export {

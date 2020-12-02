@@ -118,3 +118,19 @@ export const editPlace = (place, token) => {
         })
     }
 }
+
+export const addSocketList = (placeID, users) => {
+    return {
+        type: actionTypes.ADD_SOCKET_LIST,
+        id: placeID,
+        users: users,
+    }
+}
+
+export const addSocketPeople = (placeID, numUsers) => {
+    return {
+        type: actionTypes.ADD_SOCKET_PEOPLE,
+        id: placeID,
+        numUsers: numUsers,
+    }
+}

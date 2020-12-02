@@ -23,18 +23,14 @@ const PlacesPage = props => {
             console.log(data);
 
             // DO HERE
+            // props.onAddSocketList(data.placeID, data.users);
 
-
-            /*
-                data.placeID
-                data.placeName
-                data.users
-            */
         });
 
         socket.on("update-place-number", (data) => {
             console.log("NEW UPDATE: ");
             console.log(data);
+            // props.onAddSocketPeople(data.placeID, data.numUsers);
         });
     })
 
@@ -67,6 +63,10 @@ const mapDispatchToProps = (dispatch) => {
         onGetUserPlaces: (token) => dispatch(actions.fetchUserPlaces(token)),
         onUpdatePlace: (place, token) => dispatch(actions.editPlace(place, token)),
         onDeletePlace: (id, token) => dispatch(actions.deletePlace(id, token)),
+
+        // sockets
+        onAddSocketList: (placeID, users) => dispatch(actions.addSocketList(placeID, users)),
+        onAddSocketPeople: (placeID, numUsers) => dispatch(actions.addSocketPeople(placeID, numUsers))
     };
 }
 

@@ -7,6 +7,32 @@ const initialState = {
 const reducer = (state = initialState, action) => {
 
     switch (action.type) {
+
+        case (actionTypes.ADD_SOCKET_LIST):
+            console.log(action)
+            let newArrayPlacesList = state.places.filter((place) => (place.ID !== action.id));
+            let placeList = state.places.find(place => place.ID === action.id);
+
+            placeList = { ...placeList, users: action.users };
+            newArrayPlacesList = newArrayPlacesList.concat(placeList);
+            
+            return {
+                ...state,
+                places: newArrayPlacesList,
+            };
+        case (actionTypes.ADD_SOCKET_PEOPLE):
+            console.log(action)
+            let newArrayPlaces = state.places.filter((place) => (place.ID !== action.id));
+            let place = state.places.find(place => place.ID === action.id);
+            place = { ...place, people: action.numUsers };
+            newArrayPlaces = newArrayPlaces.concat(place);
+            return {
+                ...state,
+                places: newArrayPlaces,
+            };
+
+            ////////////
+
         case (actionTypes.GET_ALL_PLACES):
             return {
                 ...state,
