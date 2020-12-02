@@ -18,10 +18,14 @@ const PlacesPage = props => {
     socket.on("connect", (data) => {
         console.log("Socket.io Connected ...")
 
-        socket.on("update-place", (data) => {
+        socket.on("update-place-list", (data) => {
             console.log("NEW UPDATE: ");
             console.log(data);
-    
+        });
+
+        socket.on("update-place-number", (data) => {
+            console.log("NEW UPDATE: ");
+            console.log(data);
         });
     })
 
