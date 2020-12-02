@@ -14,5 +14,6 @@ type Users struct {
 	Password string `json:"password" binding:"required"`
 	IsAdmin  bool   `json:"isAdmin" gorm:"default:false"`
 
-	Places []*Places `gorm:"many2many:users_places;" json:"-"`
+	CurrentPlace *Places   `json:"-"`
+	Places       []*Places `gorm:"many2many:users_places;" json:"-"`
 }

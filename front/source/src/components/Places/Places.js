@@ -13,16 +13,8 @@ import { useStyles } from '../Styles/Styles';
 import InfoPlace from './InfoPlace';
 
 const Places = props => {
-    const socket = socketIOClient(api.URL_SOCKETIO, {
-        withCredentials: true, transportOptions: {}
-    });
 
-    useEffect(() => {
-        socket.on("connect", () => {
-            socket.emit("set-token", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiaXNBZG1pbiI6dHJ1ZSwiZXhwIjoxNjA2MzI2MjE0fQ.PO7qJ9--hZFj7YP-nqoBElI7LL6UxApnAVlCp-FW6s8")
-        })
-    }, [socket]);
-
+    const socket = props.socket;
 
     const [selectedPlace, setSelectedPlace] = useState(null);
 
@@ -43,28 +35,35 @@ const Places = props => {
     }, [onGetAllPlaces, onGetUserPlaces, props.token, props.isAdmin])
 
 
-    useEffect(() => {
-
-    }, [props.places])
-
     let places = <CircularProgress />
 
-    const selectedPlaceHandler = (event, place, socket) => {
+    const selectedPlaceHandler = (event, place) => {
         event.preventDefault();
+        socket.emit("change-place", place.name);
         setSelectedPlace(place, socket);
     }
 
+    // update place
     const updatePlaceHandler = (event, place) => {
         event.preventDefault();
-        // update place
         props.onUpdatePlace(place, props.token);
     }
 
+    // delete place
     const deletePlaceHandler = (event, id) => {
         event.preventDefault();
-        // delete place
         props.onDeletePlace(id, props.token);
         setSelectedPlace(null);
+    }
+
+    const addPersonHandler = (event) => {
+        event.preventDefault();
+        socket.emit("add-people", "")
+    }
+
+    const subPersonHandler = (event) => {
+        event.preventDefault();
+        socket.emit("sub-people", "")
     }
 
     if (!props.loading) {
@@ -100,10 +99,11 @@ const Places = props => {
                     {selectedPlace && places.length !== 0 ? <InfoPlace
                         isAdmin={props.isAdmin}
                         place={selectedPlace}
-                        // socket={socket}
+                        socket={socket}
                         updatePlace={updatePlaceHandler}
                         deletePlace={deletePlaceHandler}
-                    /> : null}
+                        addPersonHandler={addPersonHandler}
+                        subPersonHandler={subPersonHandler} /> : null}
                 </div>
             </div>
         </div>

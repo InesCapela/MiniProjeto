@@ -1,0 +1,17 @@
+
+To check:
+[ ] Client socket update data
+[ ] List people on place
+[ ] Dockerize socketIO/
+[ ] Fix front Dockerfile (npm i)
+
+Minor bugs:
+[ ] F5 leva sempre á pagina default
+[ ] Não aparece ID depois de criar user
+[ ] Mudar coordenadas do Pointer ao Adicionar no Mapa
+[ ] Mudar zoom do Mapa
+[ ] Não permitir adicionar places no mesmo lugar.
+
+Improvements:
+[ ] Refactor redux to hooks
+[ ] General refactor of code
