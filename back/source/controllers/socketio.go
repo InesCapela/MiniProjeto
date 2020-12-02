@@ -26,7 +26,7 @@ func AddPersonToPlace(c *gin.Context) {
 	services.Db.Save(&place)
 
 	defer services.Db.Close()
-	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "place": place.Name, "people": place.People})
+	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "placeID": place.ID, "placeName": place.Name, "people": place.People})
 }
 
 func SubPersonFromPlace(c *gin.Context) {
@@ -48,7 +48,7 @@ func SubPersonFromPlace(c *gin.Context) {
 	}
 
 	defer services.Db.Close()
-	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "place": place.Name, "people": place.People})
+	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "placeID": place.ID, "placeName": place.Name, "people": place.People})
 }
 
 func ChangeUserToPlace(c *gin.Context) {
@@ -94,7 +94,7 @@ func ChangeUserToPlace(c *gin.Context) {
 	//}
 
 	defer services.Db.Close()
-	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "newPlace": users})
+	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "users": users})
 
 }
 
@@ -143,6 +143,6 @@ func DisconnectUser(c *gin.Context) {
 	}
 
 	defer services.Db.Close()
-	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "newPlace": users})
+	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "users": users})
 
 }
