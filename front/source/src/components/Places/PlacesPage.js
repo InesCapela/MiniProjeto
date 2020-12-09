@@ -23,7 +23,7 @@ const PlacesPage = props => {
             console.log(data);
 
             // DO HERE
-            // props.onAddSocketList(data.placeID, data.users);
+            props.onAddSocketList(data.placeID, data.users);
 
         });
 

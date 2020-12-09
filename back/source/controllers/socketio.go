@@ -79,22 +79,25 @@ func ChangeUserToPlace(c *gin.Context) {
 
 	//////////////////////////
 	// Add place
-	//user.CurrentPlace = &place
 
-	users := []model.Users{}
-	var existsUser model.Users
-	services.Db.Model(&place).Association("ActiveStaff").Find(&existsUser)
-
-	//if existsUser.ID == 0 {
-	fmt.Println("ADDED")
+	// Add user to place
 	services.Db.Model(&place).Association("ActiveStaff").Append(&user)
 	services.Db.Save(&place)
+	user.CurrentPlace = place.Name
+	services.Db.Save(&user)
 
+	// Get list of users on place
+	users := []model.Users{}
 	services.Db.Model(&place).Association("ActiveStaff").Find(&users)
-	//}
+
+	// Convert Users to Strings
+	var usersStrings []string
+	for _, u := range users {
+		usersStrings = append(usersStrings, u.Username)
+	}
 
 	defer services.Db.Close()
-	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "placeID": place.ID, "placeName": place.Name, "users": users})
+	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "placeID": place.ID, "placeName": place.Name, "users": usersStrings})
 
 }
 
@@ -118,7 +121,14 @@ func DisconnectUser(c *gin.Context) {
 	var place model.Places
 	var data model.SocketInfo
 	c.BindJSON(&data)
+
+	if data.Place == "undefined" {
+		data.Place = user.CurrentPlace
+	}
+
 	services.Db.Where("name = ?", data.Place).First(&place)
+
+	fmt.Println("PLCAE NAME IS:", data.Place)
 
 	if place.ID == 0 {
 		fmt.Println("PLACE INVALID")
@@ -128,7 +138,7 @@ func DisconnectUser(c *gin.Context) {
 
 	//////////////////////////
 	// Add place
-	users := []model.Users{}
+	var usersStrings []string
 	var existsUser model.Users
 	services.Db.Model(&place).Association("ActiveStaff").Find(&existsUser)
 
@@ -137,10 +147,17 @@ func DisconnectUser(c *gin.Context) {
 		services.Db.Model(&place).Association("ActiveStaff").Delete(&user)
 		services.Db.Save(&place)
 
+		// Get current users on place
+		users := []model.Users{}
 		services.Db.Model(&place).Association("ActiveStaff").Find(&users)
+
+		// Convert Users to Strings
+		for _, u := range users {
+			usersStrings = append(usersStrings, u.Username)
+		}
 	}
 
 	defer services.Db.Close()
-	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "placeID": place.ID, "placeName": place.Name, "users": users})
+	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "placeID": place.ID, "placeName": place.Name, "users": usersStrings})
 
 }

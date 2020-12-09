@@ -41,27 +41,27 @@ io.on("connection", socket => {
 	// User left
 	socket.on('disconnect', () => {
 		console.log(`User disconnected: ${id}`);
+		console.log(`${id}: last place - ${socket.place}`)
+		
+		if(socket.place == null)
+			socket.place = "undefined"
 
-		if(socket.place != undefined) {
-			console.log(`${id}: last place - ${socket.place}`)
-
-			var post = api.RemovePlace(socket.token, socket.place);
-			post.then((response) => {
-				var data = response.data
-				console.log(data)
-				
-				io.emit("update-place-list", {
-					responseID: responseID,
-					placeID: data.placeID,
-					placeName: data.placeName, 
-					users: data.users
-				});
-				
-			})
-			.catch(function (error) {
-				console.log(error);
+		var post = api.RemovePlace(socket.token, socket.place);
+		post.then((response) => {
+			var data = response.data
+			console.log(data)
+			
+			io.emit("update-place-list", {
+				responseID: responseID,
+				placeID: data.placeID,
+				placeName: data.placeName, 
+				users: data.users
 			});
-		}
+			
+		})
+		.catch(function (error) {
+			console.log("Users was not on any place (probably)");
+		});
 	});
 
 
@@ -70,21 +70,23 @@ io.on("connection", socket => {
 	socket.on("change-place", msg => {
 		console.log(`${id}: change place from ${socket.place} to: ${msg}`);
 
-		if(socket.place != null){
-			var post1 = api.RemovePlace(socket.token, socket.place);
-			post1.then((response) => {
-				socket.lastPlace = socket.place;
+		if(socket.place == null)
+			socket.place = "undefined"
 
-				io.emit("update-place-list", {
-					responseID: responseID,
-					placeID: data.placeID,
-					placeName: data.placeName, 
-					users: data.users
-				});
-				
-			}).catch((error) => console.log("ERROR: leave old place"));
+		var post1 = api.RemovePlace(socket.token, socket.place);
+		post1.then((response) => {
+			var data = response.data
+			console.log(data)
+			socket.lastPlace = socket.place;
 
-		}
+			io.emit("update-place-list", {
+				responseID: responseID,
+				placeID: data.placeID,
+				placeName: data.placeName, 
+				users: data.users
+			});
+			
+		}).catch((error) => console.log("ERROR: leave old place"));
 
 		var post = api.ChangePlace(socket.token, msg);
 		post.then((response) => {
@@ -113,15 +115,14 @@ io.on("connection", socket => {
 	socket.on("add-people", async (msg) => {
 		console.log(`${id}: added one person to: ${socket.place}`);
 
-		if(socket.place === undefined){
+		if(socket.place === undefined)
 			return
-		}
 
 		var post = api.AddPerson(socket.token, socket.place);
 		await post.then((response) => {
 			var data = response.data
 			console.log(data)
-
+			
 			io.emit('update-place-number', {
 				responseID: responseID,
 				placeID: data.placeID,
@@ -141,6 +142,11 @@ io.on("connection", socket => {
 	//////////////////////////////
 	// Sub person to a place
 	socket.on("sub-people", msg => {
+
+
+		if(socket.place === undefined)
+			return
+
 		console.log(`${id}: removed one person to: ${socket.place}`);
 
 		var post = api.SubPerson(socket.token, socket.place);

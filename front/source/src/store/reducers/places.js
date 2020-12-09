@@ -10,10 +10,15 @@ const reducer = (state = initialState, action) => {
 
         case (actionTypes.ADD_SOCKET_LIST):
             console.log(action)
+
             let newArrayPlacesList = state.places.filter((place) => (place.ID !== action.id));
             let placeList = state.places.find(place => place.ID === action.id);
+            console.log("PLACE LIST")
+            console.log(placeList)
 
-            placeList = { ...placeList, users: action.users };
+            console.log(state.places.find(obj => action.id === obj.ID))
+            
+            placeList.activeStaff = action.users;
             newArrayPlacesList = newArrayPlacesList.concat(placeList);
             
             return {
