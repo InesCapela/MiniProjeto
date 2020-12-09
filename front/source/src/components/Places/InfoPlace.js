@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import EditPlace from './EditPlace';
 import Button from 'react-bootstrap/Button';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import { Redirect } from 'react-router';
 
 import Place from './Place';
@@ -11,30 +11,11 @@ import * as api from "../../store/actions/api";
 
 
 const InfoPlace = props => {
+
     const socket = props.socket
 
     const [people, setPeople] = useState(props.place.people)
-    const id = props.place.ID;
-    console.log(props.place)
 
-    socket.emit("change-place", props.place.name);
-
-    socket.on("update-place", (data) => {
-        console.log(data)
-        setPeople(data);
-        props.places[id - 1].people = data;
-    });
-
-
-    function addPersonHandler() {
-        socket.emit("change-place", props.place.name);
-        socket.emit("add-people", "")
-    }
-
-    function subPersonHandler() {
-        socket.emit("change-place", props.place.name);
-        socket.emit("sub-people", "")
-    }
 
     let adminInfoPlaces = (
         <div>
@@ -49,9 +30,12 @@ const InfoPlace = props => {
         <div style={{ padding: '10px' }}>
             {props.isAdmin === true ? adminInfoPlaces : null}
             <div style={{ padding: '10px' }}>
-                <button onClick={() => addPersonHandler()}> + </button>
+
+                <button onClick={(event) => props.addPersonHandler(event, props.place, socket)}> + </button>
+
                 <div>{people}</div>
-                <button onClick={() => subPersonHandler()}> - </button>
+
+                <button onClick={(event) => props.subPersonHandler(event, props.place, socket)}> - </button>
             </div>
             <hr />
             <div>

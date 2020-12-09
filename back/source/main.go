@@ -4,13 +4,11 @@ import (
 	"api/model"
 	"api/routes"
 	"api/services"
-	"fmt"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
 
-	socketio "github.com/googollee/go-socket.io"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
@@ -37,6 +35,7 @@ func initializeRoutes(router *gin.Engine) {
 	authRoutes(router)
 	backofficeRoutes(router)
 	frontofficeRoutes(router)
+	socketRoutes(router)
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 }
 
@@ -80,31 +79,76 @@ func frontofficeRoutes(router *gin.Engine) {
 	}
 }
 
+func socketRoutes(router *gin.Engine) {
+	socket := router.Group("/socketio")
+	socket.Use(services.UserAuthorizationRequired())
+	{
+		socket.POST("/add", routes.AddPersonToPlace)
+		socket.POST("/sub", routes.SubPersonFromPlace)
+		socket.POST("/change", routes.ChangeUserToPlace)
+		socket.POST("/disconnected", routes.DisconnectUser)
+	}
+}
+
+func main() {
+	services.FormatSwagger()
+
+	router := gin.New()
+	router.Use(gin.Logger())
+	router.Use(gin.Recovery())
+	router.Use(services.GinMiddleware("*"))
+
+	// Initialize routes
+	initializeRoutes(router)
+	router.Run(":8080")
+}
+
+/*
+
+MAIN:
+
+	router.Use(services.GinMiddleware("http://localhost:3000"))
+
+	// Socket io
+	server := socketio.NewServer(nil)
+	socketioRoutes(server)
+
+	router.GET("/socket.io/*any", gin.WrapH(server))
+	router.POST("/socket.io/*any", gin.WrapH(server))
+
+	go server.Serve()
+	defer server.Close()
+
+
 func socketioRoutes(server *socketio.Server) {
 	// User connected
 	server.OnConnect("/", func(s socketio.Conn) error {
-		fmt.Println("socket.io> new connection ...")
-
-		// AUTH
-		server.OnEvent("", "set-token", func(s socketio.Conn, data string) {
-			s.SetContext(services.ParseToken(data))
-
-			if s.Context() == nil {
-				fmt.Println("socket.io> invalid token!")
-				s.Close()
-			}
-
-			inter := s.Context()
-			fmt.Println("socket.io> username:", inter.(*model.SocketInfo).Username)
-			fmt.Println("socket.io> place:", inter.(*model.SocketInfo).Place)
-		})
-
+		fmt.Println("socket.io> new connection ... (", s.ID(), ")")
 		return nil
+	})
+
+	// AUTH
+	server.OnEvent("/", "set-token", func(s socketio.Conn, data string) {
+		s.SetContext(services.ParseToken(data))
+
+		if s.Context() == nil {
+			fmt.Println("socket.io> invalid token!")
+			s.Close()
+		}
+
+		inter := s.Context()
+		fmt.Println("socket.io> username:", inter.(*model.SocketInfo).Username)
+		fmt.Println("socket.io> place:", inter.(*model.SocketInfo).Place)
 	})
 
 	// Add people to room
 	server.OnEvent("/", "add-people", func(s socketio.Conn, data string) {
 		socketInfo := s.Context().(*model.SocketInfo)
+
+		if socketInfo == nil {
+			s.Close()
+		}
+
 		fmt.Println("socket.io> (", socketInfo.Username, ") added one person to:", socketInfo.Place)
 
 		placeName, people := services.AddPersonToPlace(*socketInfo)
@@ -119,6 +163,11 @@ func socketioRoutes(server *socketio.Server) {
 	// Sub people to room
 	server.OnEvent("/", "sub-people", func(s socketio.Conn, data string) {
 		socketInfo := s.Context().(*model.SocketInfo)
+
+		if socketInfo == nil {
+			s.Close()
+		}
+
 		fmt.Println("socket.io> (", socketInfo.Username, ") subtracted one person from:", socketInfo.Place)
 
 		placeName, people := services.SubPersonFromPlace(*socketInfo)
@@ -134,39 +183,15 @@ func socketioRoutes(server *socketio.Server) {
 		socketInfo := s.Context().(*model.SocketInfo)
 		fmt.Println("socket.io> (", socketInfo.Username, ") wants to change place from:", socketInfo.Place, "to:", data)
 		services.ChangeUserToPlace(socketInfo, data)
+
+		// Emit new list to users
 	})
 
 	//  User disconnected
 	server.OnDisconnect("/", func(s socketio.Conn, err string) {
-		//socketInfo := s.Context().(*model.SocketInfo)
-		//fmt.Println("socket.io> (", socketInfo.Username, ") disconnected! Last seen on:", socketInfo.Place)
+		fmt.Println("socket.io> disconnected! Error:", err)
 	})
 
 }
 
-func main() {
-	services.FormatSwagger()
-
-	router := gin.New()
-	router.Use(gin.Logger())
-	router.Use(gin.Recovery())
-	router.Use(services.GinMiddleware("*"))
-
-	//router.Use(services.ReactMiddleware())
-	// router.Use(services.GinMiddleware("http://localhost:3000"))
-
-	// Initialize routes
-	initializeRoutes(router)
-
-	// Socket io
-	server := socketio.NewServer(nil)
-	socketioRoutes(server)
-
-	router.GET("/socket.io/*any", gin.WrapH(server))
-	router.POST("/socket.io/*any", gin.WrapH(server))
-
-	go server.Serve()
-	defer server.Close()
-
-	router.Run(":8080")
-}
+*/

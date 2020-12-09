@@ -55,7 +55,7 @@ func RegisterHandler(c *gin.Context) {
 	} else {
 		services.Db.Save(&creds)
 		defer services.Db.Close()
-		c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "message": "Success!", "User ID": creds.ID})
+		c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "message": "Success!", "userID": creds.ID})
 	}
 }
 

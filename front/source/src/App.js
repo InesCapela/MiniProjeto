@@ -10,12 +10,13 @@ import Logout from './components/Logout/Logout';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Users from './components/Users/Users';
 import { connect } from 'react-redux';
+import PlacesPage from './components/Places/PlacesPage';
 
 const App = props => {
 
   const routes = (
     <Switch>
-      <Route path="/places" component={Places} />
+      <Route path="/places" component={PlacesPage} />
       <Route path="/map" component={MapLeaflet} />
       <Route path="/users" component={Users} />
       <Route path="/logout" component={Logout} />
