@@ -1,9 +1,9 @@
 
 To check:
-[] Client socket update data
-[] List people on place
-[] Dockerize socketIO/
-[] Fix front Dockerfile (npm i)
+[x] Client socket update data
+[x] List people on place
+[x] Dockerize socketIO/
+[x] Fix front Dockerfile (npm i)
 
 Minor bugs:
 [] F5 leva sempre á pagina default
@@ -13,5 +13,6 @@ Minor bugs:
 [] Não permitir adicionar places no mesmo lugar.
 
 Improvements:
+[] Move socket to redux
 [] Refactor redux to hooks
 [] General refactor of code
